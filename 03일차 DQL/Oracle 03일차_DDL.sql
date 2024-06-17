@@ -1,0 +1,103 @@
+-- 24.06.17 SQL 3일차_01. DDL
+-- DDL, Data Definition Language   데이터의 정의어
+-- CREATE, ALTER, DROP                      DDL의 종류
+-- CREATE USER, CREATE TABLE, ....          예시
+-- DROP TABLE, ...
+
+ALTER TABLE USER_FOREIGN_KEY RENAME TO USER_TBL;
+-- ALTER로 할 수 있는 것,
+-- 컬럼 추가, 컬럼삭제, 컬럼수정(데이터타입, 이름), 테이블명 수정 2가지
+-- 제약조건 추가, 삭제, 수정
+
+-- 제약조건 추가, 삭제, 수정
+-- 제약조건을 추가하면 이름이 생김, 이름을 알아야 삭제 가능
+-- 2. 실행하면 ROW가 없음
+SELECT * FROM user_constraintS WHERE TABLE_NAME = 'USER_TBL';
+-- 제약조건 삭제
+-- 1. 실행하고
+ALTER TABLE USER_TBL
+DROP CONSTRAINT SYS_C007361;
+-- 제약조건 추가
+--CONSTRAINT FK_GRADE_CODE 이름 붙이는 거
+-- NOT NULL 추가는 좀 다름...
+ALTER TABLE USER_TBL
+MODIFY USER_ID NOT NULL;
+-- USER_ID VARCHAR2(20) -> USER_ID NOT NULL BARCHAR2(20)
+ALTER TABLE USER_TBL
+MODIFY USER_DATE DEFAULT SYSDATE;
+
+SELECT * FROM USER_CONSTRAINTS WHERE TABLE_NAME = 'USER_TBL';
+DESC USER_TBL;
+
+ALTER TABLE USER_TBL
+ADD CONSTRAINT FK_GRADE_CODE;
+-- 제약조건에 왜래키 추가 하는 것
+ALTER TABLE USER_TBL
+ADD CONSTRAINT FK_GRADE_CODE FOREIGN KEY(GRADE_CODE) REFERENCES USER_GRADE(GRADE_CODE);
+
+FOREIGN KEY(GRADE_CODE) REFERNCES USER_GRADE(GRADE_CODE);
+
+SELECT * FROM USER_CONSTRAINTS WHERE TABLE_NAME = 'USER_GRADE';
+--2. CONSTRAINT_NAME이 FK_GRADE_CODE인 것 확인
+--EX) USER_GRADE가 가지고 있는 제약조건 조회하여 삭제 후 같은 이름으로 재 생성
+-- 제약조건 수정은 삭제하고 추가하는 것, 단 이름은 바꿀 수 있음
+ALTER TABLE USER_GRADE
+RENAME CONSTRAINT PK_GRADE_CODE TO PRIMARYKEY_GR_CODE;
+
+SELECT * FROM USER_CONSTRAINTS WHERE TABLE_NAME = 'USER_GRADE';
+ALTER TABLE USER_GRADE
+DROP CONSTRAINT PK_GRADE_CODE;
+ALTER TABLE USER_GRADE
+ADD CONSTRAINT PK_GRADE_CODE PRIMARY KEY(GRADE_CODE);
+
+
+
+
+-- ex01) USER_FOREIGN_KEY 테이블에 USER_DATE DATE 컬럼을 추가해주세요
+-- ex02) USER_FOREIGN_KEY 테이블에 USER_DATE DATE 컬럼을 삭제해주세요
+-- ex03) USER_FOREIGN_KEY 테이블에 USER_DATE 컬럼의 자료형을 VARCHAR2(10)으로 바꿔주세요
+-- ex04) USER_FOREIGN_KEY 테이블에 USER_DATE DATE 컬럼의 이름을 REG_DATE로 
+-- 변경해주세요
+-- ex05) USER_FOREIGN_KEY 테이블의 이름을 USER_TBL로 바꿔주세요 (2가지)
+
+-- [테이블의 레이아웃을 조회하는 명령어]-----------------------------
+-- 해당 테이블의 컬럼명, 컬럼의 Null여부, 데이터 타입을 조회할 수 있다. 
+-- DESC 테이블명;
+DESC USER_FOREIGN_KEY;
+
+--[컬럼 추가]--------------------------------------------------------
+-- ex01) USER_FOREIGN_KEY 테이블에 USER_DATE DATE 컬럼을 추가해주세요
+-- USER_FOREIGN_KEY에  USER_DATE DATE 컬럼을 추가& 데이터타입 DATE
+ALTER TABLE USER_FOREIGN_KEY 
+ADD REG_DATE DATE;
+
+--[컬럼 삭제]--------------------------------------------------------
+-- ex02) USER_FOREIGN_KEY 테이블에 USER_DATE DATE 컬럼을 삭제해주세요
+ALTER TABLE USER_FOREIGN_KEY
+DROP COLUMN USER_DATE;
+
+--[컬럼 데이터 유형 수정]--------------------------------------------
+-- ex03) USER_FOREIGN_KEY 테이블에 REG_DATE 컬럼의 자료형을 VARCHAR2(10)으로 바꿔주세요
+ALTER TABLE USER_FOREIGN_KEY MODIFY REG_DATE VARCHAR2(10);
+
+--[컬럼명 수정하기]--------------------------------------------------
+-- ex04) USER_FOREIGN_KEY 테이블에 USER_DATE DATE 컬럼의 이름을 REG_DATE로 
+ALTER TABLE USER_FOREIGN_KEY
+RENAME COLUMN REG_DATE TO USER_DATE;
+
+
+
+--[컬럼의 데이터유형 수정, 테이블명 수정]------------------------------
+-- ex05) USER_FOREIGN_KEY 테이블의 이름을 USER_TBL로 바꿔주세요 (2가지)
+ALTER TABLE USER_FOREIGN_KEY 
+MODIFY USER_DATE DATE;
+
+RENAME USER_TABLE TO USER_TBL;
+SELECT * FROM USER_TBL;
+
+-- 제약조건 활성화/비활성화
+ALTER TABLE  USER_GRADE
+DISABLE CONSTRAINT FK_GRADE_CODE;
+ALTER TABLE USER_GRADE
+ENABLE CONSTRAINT FK_GRADE_CODE;
+SELECT * FROM USER_CONSTRAINTS WHERE TABLE_NAME = 'USER_GRADE';
